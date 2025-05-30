@@ -39,7 +39,7 @@ export default function AccountGeneral() {
 
   const defaultValues = useMemo(
     () => ({
-      userName: userData ? (userData?.ServiceRes.userName) : '',
+      userName: userData ? (userData.userName) : '',
       // EmailAddress: userData ? decrypt(userData.EmailAddress) : '',
       // ImagePath: userData ? decrypt(userData.ImagePath) : null,
       // Designation: userData ? decrypt(userData.Designation) : '',

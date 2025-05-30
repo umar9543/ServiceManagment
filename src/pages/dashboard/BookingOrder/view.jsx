@@ -21,7 +21,7 @@ export default function BookingOrderViewPage() {
   return (
     <>
       <Helmet>
-        <title>Booking Order</title>
+        <title>Client</title>
       </Helmet>
 
       <BookingListView/>

@@ -8,6 +8,7 @@ import { useSettingsContext } from 'src/components/settings';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useAuthFetch } from 'src/api/apibasemethods';
 // import BookingEditForm from '../booking-edit';
 
 
@@ -16,47 +17,34 @@ import axios from 'axios';
 export default function BookingEditView({ urlData }) {
 
     const [selectedBooking, setSelectedBooking] = useState(null);
-    const [styles, setStyles] = useState([])
+  const authFetch=useAuthFetch();
+  useEffect(() => {
+  if (!urlData?.id) return;
 
-    useEffect(() => {
-        axios.get(`https://ssblapi.m5groupe.online:6449/api/BookingPurchase/${urlData?.id}`)
-            .then(response => {
-                const formatedData = {
-                    ...response.data,
-                    placementDate: new Date(response.data.placementDate),
-                    shipmentDate: new Date(response.data.shipmentDate),
-                    tolerance: new Date(response.data.tolerance),
-                }
-                setSelectedBooking(formatedData)
-            })
-            .catch(error => console.error("Error fetching customers:", error));
-       
-    }, [urlData?.id]);
+  authFetch(`http://192.168.100.37:8070/api/Client/${urlData.id}`)
+    .then(res => res.json()) // 🟢 parse the JSON
+    .then(data => {
+      console.log('Fetched client:', data);
+      const formatedData = {
+        ...data,
+        enrollmentDate: new Date(data.enrollmentDate), // 🟢 fix this line
+      };
+      setSelectedBooking(formatedData);
+    })
+    .catch(error => {
+      console.error('Error fetching client:', error);
+    });
+}, [urlData?.id,authFetch]);
 
-    useEffect(()=>{
-        axios.get(`https://ssblapi.m5groupe.online:6449/api/BookingPurchase/get-details/${urlData?.id}`)
-        .then(response => {
-            const updated = response.data.map(item => ({
-                ...item,
-                vendorPrice: item.vendorRate,
-                itemPrice: item.newRate,
-                poQuantity: item.quantity,
-            }))
-
-            setStyles(updated)
-        }
-        )
-        .catch(error => console.error("Error fetching customers:", error));
-    },[urlData?.id])
-
+console.log(selectedBooking)
     const settings = useSettingsContext();
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <CustomBreadcrumbs
-                heading="Booking Order Information"
+                heading="Clients Information"
                 links={[
                     { name: "Home", href: paths.dashboard.root },
-                    { name: "Booking Order", href: paths.dashboard.bookingOrder.root },
+                    { name: "Clients", href: paths.dashboard.bookingOrder.root },
                     { name: "Edit", },
                 ]}
                 sx={{ mb: { xs: 3, md: 5 } }}
@@ -64,7 +52,7 @@ export default function BookingEditView({ urlData }) {
 
 
 
-            {(selectedBooking !== null && styles.length > 0) && <BookingEdit selectedBooking={selectedBooking} currentStyles={styles} urlData={urlData} />}
+            {(selectedBooking !== null ) && <BookingEdit selectedBooking={selectedBooking}  urlData={urlData} />}
 
         </Container>
     );

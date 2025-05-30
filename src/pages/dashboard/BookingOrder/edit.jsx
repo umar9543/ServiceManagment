@@ -23,7 +23,7 @@ export default function BookingOrderEditPage() {
   return (
     <>
       <Helmet>
-        <title>Booking Order</title>
+        <title>Client</title>
       </Helmet>
 
       <BookingEditView urlData={param}/>

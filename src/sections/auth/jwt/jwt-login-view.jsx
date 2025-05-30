@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -11,126 +11,114 @@ import LoadingButton from '@mui/lab/LoadingButton';
 import InputAdornment from '@mui/material/InputAdornment';
 
 import { useRouter, useSearchParams } from 'src/routes/hooks';
-
 import { useBoolean } from 'src/hooks/use-boolean';
-
-import { useAuthContext } from 'src/auth/hooks';
 import { PATH_AFTER_LOGIN } from 'src/config-global';
 
 import Iconify from 'src/components/iconify';
 import FormProvider, { RHFTextField } from 'src/components/hook-form';
-import { Get, Post } from 'src/api/apibasemethods';
 import { encrypt } from 'src/api/encryption';
+import { useAuthFetch } from 'src/api/apibasemethods';
 
 // ----------------------------------------------------------------------
 
 export default function JwtLoginView() {
-  const { login } = useAuthContext();
-
+  // ────────────────────────────────────────────────────────────────────
+  // STATE / HOOKS
+  // ────────────────────────────────────────────────────────────────────
   const router = useRouter();
-
-  const [errorMsg, setErrorMsg] = useState('');
-  const [loginInfo, setLoginInfo] = useState({
-    UserCode: '',
-    Password: '',
-    AgencyName: 'Synergies Bangladesh'
-  });
-
   const searchParams = useSearchParams();
-
   const returnTo = searchParams.get('returnTo');
-
+ const authFetch = useAuthFetch();
+  const [errorMsg, setErrorMsg] = useState('');
   const password = useBoolean();
+  const refreshTimer = useRef(null);
+  useEffect(() => {
+    refreshTimer.current = setTimeout(() => {
+      // your refresh token logic
+    }, 15 * 60 * 1000); // 15 minutes
+    return () => clearTimeout(refreshTimer.current);
+  }, []);
 
-  const LoginUser = async () => {
 
-  }
-
+  // ────────────────────────────────────────────────────────────────────
+  // FORM
+  // ────────────────────────────────────────────────────────────────────
   const LoginSchema = Yup.object().shape({
-    userCode: Yup.string().required('User Code is required'),
+    userName: Yup.string().required('User Name is required'),
     password: Yup.string().required('Password is required'),
-    agency: Yup.string('Agency is required'),
   });
-
-  const defaultValues = {
-    userCode: '',
-    password: '',
-    agency: 'Synergies Bangladesh',
-  };
 
   const methods = useForm({
     resolver: yupResolver(LoginSchema),
-    defaultValues,
+    defaultValues: { userName: '', password: '' },
   });
 
   const {
-    reset,
     handleSubmit,
+    setValue,
     formState: { isSubmitting },
+    reset,
   } = methods;
 
-  const onSubmit = handleSubmit(async () => {
+ 
+
+  // ────────────────────────────────────────────────────────────────────
+  // LOGIN SUBMIT
+  // ────────────────────────────────────────────────────────────────────
+  const onSubmit = handleSubmit(async ({ userName, password: pwd }) => {
     try {
-      // Encrypt and URL-encode the UserCode and Password
-      const encryptedUserCode = encodeURIComponent(encrypt(loginInfo.UserCode));
-      const encryptedPassword = encodeURIComponent(encrypt(loginInfo.Password));
-      const encryptedAgency = encodeURIComponent(encrypt(loginInfo.AgencyName));
-  
-      // Construct the API URL with encrypted parameters
-      const apiUrl = `https://merchantportalssblapi.m5groupe.online:6447/mapi/GetLoginInfo?UserCode=${encryptedUserCode}&Password=${encryptedPassword}&AgencyName=${encryptedAgency}`;
-  
-      // Make the GET request
+      const encryptedUserName = encodeURIComponent(encrypt(userName));
+      const encryptedPassword = encodeURIComponent(encrypt(pwd));
+
+      const apiUrl = `http://192.168.100.37:8070/api/account/login?usercode=${encryptedUserName}&password=${encryptedPassword}`;
+
       const response = await fetch(apiUrl, {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',               // ← make sure cookie sticks
       });
-  
-      // Check if the response is successful
-      if (response.ok) {
-        const data = await response.json();
-        const loginTime = new Date().getTime();
-        localStorage.setItem('UserData', JSON.stringify(data));
-        localStorage.setItem('loginTime', loginTime);
-        router.push(returnTo || PATH_AFTER_LOGIN);
-      } else {
-        setErrorMsg('Incorrect UserCode or Password');
+
+      if (!response.ok) {
+        setErrorMsg('Incorrect username or password');
+        return;
       }
-    } catch (error) {
+
+      // any extra user data
+      const userData = await response.json();
+      localStorage.setItem('UserData', JSON.stringify(userData));
+      localStorage.setItem('tokenIssuedAt', Date.now().toString());
+
+                       // ← kick-off silent refresh
+      router.push(returnTo || PATH_AFTER_LOGIN);
+    } catch (err) {
+      console.error(err);
       setErrorMsg('An error occurred. Please try again.');
-      console.log(error);
       reset();
     }
   });
+
+ 
   const renderHead = (
     <Stack spacing={2} sx={{ mb: 5 }}>
-      <Typography variant="h4">Sign in to Synergies Bangladesh</Typography>
-
-      {/* <Stack direction="row" spacing={0.5}>
-        <Typography variant="body2">New user?</Typography>
-
-        <Link component={RouterLink} href={paths.auth.jwt.register} variant="subtitle2">
-          Create an account
-        </Link>
-      </Stack> */}
+      <Typography variant="h4">Sign in to Service Management</Typography>
     </Stack>
   );
 
   const renderForm = (
     <Stack spacing={2.5}>
-      <RHFTextField InputLabelProps={{
-        shrink: true,
-      }} name="userCode" label="User Code" onchange={(e) => setLoginInfo({ ...loginInfo, UserCode: e.target.value })} />
+      <RHFTextField
+        InputLabelProps={{ shrink: true }}
+        name="userName"
+        label="User Code"
+        onChange={(e) => setValue('userName', e.target.value)}
+      />
 
       <RHFTextField
         name="password"
         label="Password"
-        InputLabelProps={{
-          shrink: true,
-        }}
         type={password.value ? 'text' : 'password'}
-        onchange={(e) => setLoginInfo({ ...loginInfo, Password: e.target.value })}
+        InputLabelProps={{ shrink: true }}
+        onChange={(e) => setValue('password', e.target.value)}
         InputProps={{
           endAdornment: (
             <InputAdornment position="end">
@@ -141,10 +129,6 @@ export default function JwtLoginView() {
           ),
         }}
       />
-
-      {/* <Link variant="body2" color="inherit" underline="always" sx={{ alignSelf: 'flex-end' }}>
-        Forgot password?
-      </Link> */}
 
       <LoadingButton
         fullWidth
@@ -159,6 +143,9 @@ export default function JwtLoginView() {
     </Stack>
   );
 
+  // ────────────────────────────────────────────────────────────────────
+  // RENDER
+  // ────────────────────────────────────────────────────────────────────
   return (
     <>
       {renderHead}

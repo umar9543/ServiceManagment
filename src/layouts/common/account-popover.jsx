@@ -48,9 +48,9 @@ export default function AccountPopover() {
   const popover = usePopover();
 
   const userData = JSON.parse(localStorage.getItem('UserData'));
-    const UserID=decrypt(userData.ServiceRes.UserID);
-    const RoleID=decrypt(userData.ServiceRes.RoleID);
-    const ECPDivistion=decrypt(userData.ServiceRes.ECPDivistion);
+    const UserID=decrypt(userData.UserID);
+    const RoleID=decrypt(userData.RoleID);
+    const ECPDivistion=decrypt(userData.ECPDivistion);
 console.log(UserID,RoleID,ECPDivistion)
   const handleLogout = async () => {
     try {
@@ -87,26 +87,26 @@ console.log(UserID,RoleID,ECPDivistion)
         }}
       >
         <Avatar
-          src={decrypt(userData.ServiceRes?.ImagePath)}
-          alt={decrypt(userData.ServiceRes.UserName)}
+          src={decrypt(userData?.ImagePath)}
+          alt={decrypt(userData.userName)}
           sx={{
             width: 36,
             height: 36,
             border: (theme) => `solid 2px ${theme.palette.background.default}`,
           }}
         >
-          {decrypt(userData.ServiceRes.UserName)?.charAt(0)?.toUpperCase() || 'i'}
+          {decrypt(userData.userName)?.charAt(0)?.toUpperCase() || 'i'}
         </Avatar>
       </IconButton>
 
       <CustomPopover open={popover.open} onClose={popover.onClose} sx={{ width: 200, p: 0 }}>
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
-            {decrypt(userData.ServiceRes.UserName)}
+            {decrypt(userData.userName)}
           </Typography>
 
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {decrypt(userData?.ServiceRes.EmailAddress)}
+            {decrypt(userData.email)}
           </Typography>
         </Box>
 

@@ -20,7 +20,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 // import UploadFileIcon from "@mui/icons-material/UploadFile";
 // import DeleteIcon from "@mui/icons-material/Delete";
 import { DatePicker } from "@mui/x-date-pickers";
-import { Get, Post } from "src/api/apibasemethods";
+import { Get, Post, useAuthFetch } from "src/api/apibasemethods";
 import FormProvider, {
     RHFSwitch,
     RHFTextField,
@@ -28,32 +28,32 @@ import FormProvider, {
     RHFUploadAvatar,
     RHFAutocomplete,
 } from 'src/components/hook-form';
-import PropTypes from "prop-types";
+
 import { decrypt } from "src/api/encryption";
 import { useSettingsContext } from "src/components/settings";
-import ProductSpecificInfo from "./Purchase";
+
 
 
 
 const BookingOrder = () => {
 
-      const decryptObjectKeys = (data) => {
-         const decryptedData = data.map((item) => {
-           const decryptedItem = {};
-           Object.keys(item).forEach((key) => {
-             decryptedItem[key] = decrypt(item[key]);
-           });
-           return decryptedItem;
-         });
-         return decryptedData;
-       };
-     
-     
-     
-         const userData = useMemo(() => JSON.parse(localStorage.getItem('UserData')), []);
-         const UserID=decrypt(userData.ServiceRes.UserID);
-         const RoleID=decrypt(userData.ServiceRes.RoleID);
-         const ECPDivistion=decrypt(userData.ServiceRes.ECPDivistion);
+    const decryptObjectKeys = (data) => {
+        const decryptedData = data.map((item) => {
+            const decryptedItem = {};
+            Object.keys(item).forEach((key) => {
+                decryptedItem[key] = decrypt(item[key]);
+            });
+            return decryptedItem;
+        });
+        return decryptedData;
+    };
+
+
+
+    const userData = useMemo(() => JSON.parse(localStorage.getItem('UserData')), []);
+    const UserID = decrypt(userData.userId);
+    const RoleID = decrypt(userData.RoleID);
+    const ECPDivistion = decrypt(userData.ECPDivistion);
     const certificationOptions = ["Yes", "No"];
     const [selectedCertification, setSelectedCertification] = useState(null);
     const [certificationValues, setCertificationValues] = useState({
@@ -61,98 +61,61 @@ const BookingOrder = () => {
         GOTS: 0,
         Others: 0
     });
-    const handleCertificationChange = (event, newValue) => {
-        console.log('newvalue', newValue)
-        const certificationValue = newValue === "Yes" ? 1 : 0;
-        setValue("certification", certificationValue);
-        setSelectedCertification(certificationValue);
+    const settings = useSettingsContext();
+    const authFetch = useAuthFetch();
 
-        if (certificationValue === 0) {
-            // Reset checkboxes if "No" is selected
-            setCertificationValues({ TC: 0, GOTS: 0, Others: 0 });
-        }
-    };
-    const handleCheckboxChange = (event) => {
-        const { name, checked } = event.target;
-        setCertificationValues((prev) => ({
-            ...prev,
-            [name]: checked ? 1 : 0, // Set 1 when checked, 0 when unchecked
-        }));
-    };
-
-    const [toggle, setToggle] = useState(false)
     const [totalAmount, setTotalAmount] = useState(0);
     const [totalQuantity, setTotalQuantity] = useState(0);
     const [cancelQuantity, setCancelQuantity] = useState("");
-    const [totalMark, setTotalMark] = useState(0); // Initialize with 0
+
 
     // Function to calculate commission
 
 
     const userdata = JSON.parse(localStorage.getItem("UserData"))
 
+
+
     const validationSchema = Yup.object().shape({
 
-        RefNO: Yup.string()
-            .required("Reference No is required")
-            .test("unique-refno", "Reference No already exists", (value) => {
-                if (!value) return true;
-                return !existingRefNOs.includes(value);
-            }),
 
+        // companyName: Yup.string()
+        //     .required("Company Name is required"),
 
-        placementDates: Yup.date().required("placementDate is required"),
-        shipmentDateBuyer: Yup.date()
-            .required("Shipment Date (Buyer) is required")
-            .min(Yup.ref('placementDates'), "Shipment Date (Buyer) must be after Placement Date"),
+        // industry: Yup.string()
+        //     .required("Industry is required"),
 
-        shipmentDateVendor: Yup.date()
-            .required("Shipment Date (Vendor) is required")
-            .min(Yup.ref('placementDates'), "Shipment Date (Vendor) must be after Placement Date"),
-        customer: Yup.object().nullable().required("Customer is required"),
-        brandCustomer: Yup.object().nullable().required("Customer Brand is required"),
-        supplier: Yup.object().nullable().required("Supplier is required"),
-        supplierPC: Yup.object().nullable(),
-        merchant: Yup.object().nullable().required("Merchant is required"),
-        productPortfolio: Yup.object().nullable().required("Product Portfolio is required"),
-        productCategory: Yup.object().nullable().required("Product Category is required"),
-        productGroup: Yup.object().nullable(),
-        season: Yup.string().required("Season is required"),
-        fabricType: Yup.string().required("Fabric Type is required"),
-        businessManagers: Yup.object().nullable(),
-        Currency: Yup.object().nullable().required("Currency is required"),
-        construction: Yup.string().required("Construction is required"),
-        design: Yup.string().required("Design is required"),
-        transaction: Yup.object().nullable().required("Transaction is required"),
-        lcopt: Yup.string().nullable(),
-        paymentType: Yup.object(),
-        shipmentMode: Yup.object().nullable().required("Shipment Mode is required"),
-        paymentMode: Yup.object().nullable().required("Payment Mode is required"),
-        certification: Yup.string().required("Certification selection is required"),
-        buyerCommissions: Yup.number(),
-        vendorCommissions: Yup.number(),
-        totalMarkups: Yup.number(),
-        comments: Yup.string().nullable(),
-        files: Yup.mixed().nullable().required("File is required"),
+        // companySize: Yup.object()
+        //     .nullable()
+        //     .required("Company Size is required"),
+
+        // address: Yup.string()
+        //     .required("Address is required"),
+
+        // contactNumber: Yup.string()
+        //     .required("Contact Number is required"),
+
+        // contactPerson: Yup.string()
+        //     .required("Contact Person is required"),
+
+        // email: Yup.string()
+        //     .email("Invalid email format")
+        //     .required("Email is required"),
+
+        // website: Yup.string().required("Website is required"),
+
+        // country: Yup.string()
+        //     .required("Country is required"),
+
+        // enrollmentDate: Yup.date()
+        //     .required("Enrollment Date is required"),
 
 
     });
 
 
-    const calculateCommission = (commission, totalAmt) => {
-
-        if (!commission || !totalAmt) return 0;
-        return Math.round((commission * totalAmt) / 100 * 100) / 100;
 
 
-    };
-    const calculateMark = (commission, totalAmt) => {
-
-        if (!commission || !totalAmt) return 0;
-        return Math.round(commission * totalAmt)
-
-
-    };
     const methods = useForm({
         resolver: yupResolver(validationSchema),
 
@@ -168,243 +131,33 @@ const BookingOrder = () => {
     } = methods;
 
     const values = watch();
-    const selectedLCOptions = watch("lcopt");
+
     // Sample data for dropdowns
-    const [customerData, setCustomerData] = useState([]);
-    const [brandData, setBrandData] = useState([]);
-    const [SupplierData, setSupplierData] = useState([]);
+
 
     const [MerchantData, setMerchantData] = useState([]);
     const [productPortfolioData, setproductPortfolioData] = useState([]);
-    const [productCategoryData, setproductCategoryData] = useState([]);
-    const [productGroupData, setproductGroupData] = useState([]);
-    const [BusinsessManager, setBusinsessManager] = useState([]);
-    const [shipmentModes, setShipmentModes] = useState([]);
-    const [paymentModes, setPaymentModes] = useState([]);
-    const [currencies, setCurrencies] = useState([]);
-    const [totalMarkup, setTotalMarkup] = useState("0");
-    const Transactions = [
-        { TransID: 1, TransName: "Services" },
-        { TransID: 2, TransName: "Trade" }];
-    const paymentType = [
-        { id: 1, name: "L/C" },
-        { id: 2, name: "TT" },
-        { id: 3, name: "Contractual" },
-        { id: 4, name: "DP" },
-        { id: 5, name: "DA" }
-    ];
-    const lcOptions = ["SSHK", "SSBD", "Supplier", "__"];
-    const supPerCustom = [{ id: 262, name: "Synergies Sourcing BD" },]
-    const [selectedPayment, setSelectedPayment] = useState(null);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Client/GetAllCompanySize")
+            .then(response => response.json())
+            .then(data => {
+                setproductPortfolioData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
+
+
+
+
     const [selectedLCOption, setSelectedLCOption] = useState(null);
 
-    const [formsData, setFormData] = useState({
-        RefNO: "",
-        placementDate: null,
-        shipmentDateBuyer: null,
-        shipmentDateVendor: null,
-        customer: null,
-        brandCustomer: null,
-        supplier: null,
-        merchant: null,
-        productPortfolio: null,
-        productCategory: null,
-        productGroup: null,
-        season: null,
-        totalQty: null,
-        fabricType: null,
-        Construction: null,
-        Design: null,
-        businessManagers: null,
-        Trans: null
-    });
-    // console.log(formData)
-    // file section
-    const [comment, setComment] = useState("");
-    const [files, setFiles] = useState([]);
 
-
-    const handleDrop = useCallback((acceptedFiles) => {
-        const newFiles = acceptedFiles.map((file) =>
-            Object.assign(file, {
-                preview: URL.createObjectURL(file),
-            })
-        );
-
-        setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-
-        if (files) {
-            setValue('files', newFiles, { shouldValidate: true });
-        }
-
-    }, [setValue, files]);
-    const settings = useSettingsContext();
-    const handleFileChange = (event) => {
-        const selectedFiles = Array.from(event.target.files);
-
-        // Filter files to ensure only PDFs are selected
-        const pdfFiles = selectedFiles.filter(file => file.type === "application/pdf");
-
-        if (pdfFiles.length !== selectedFiles.length) {
-            enqueueSnackbar("Enter valid Pdf File!", { variant: "error" })// Alert user if any non-PDF file is selected
-        }
-
-        setFiles(pdfFiles);  // Store only valid PDF files
+    const getCookieValue = (name) => {
+        const cookie = document.cookie
+            .split("; ")
+            .find(row => row.startsWith(`${name}=`));
+        return cookie ? cookie.split("=")[1] : null;
     };
-
-    const handleDeleteFile = useCallback((index) => {
-        setFiles((prevFiles) => {
-            console.log("Before Deletion:", prevFiles);
-
-
-            const updatedFiles = [...prevFiles];
-            updatedFiles.splice(index, 1); // Remove file at index
-
-            console.log("After Deletion:", updatedFiles);
-            return updatedFiles;
-        });
-    }, []);
-
-
-
-    useEffect(() => {
-        Get("https://ssblapi.m5groupe.online:6449/api/customer")
-            .then(response => {
-                const decryptedData = decryptObjectKeys(response.data);
-
-                // ✅ Convert decrypted customerID to number
-                const formattedData = decryptedData.map(item => ({
-                    customerID: Number(item.customerID), // Convert to number
-                    customerName: item.customerName,
-                }));
-
-                setCustomerData(formattedData);
-            })
-            .catch(error => console.error("Error fetching customers:", error));
-    }, []);
-
-
-
-    useEffect(() => {
-        Get("https://ssblapi.m5groupe.online:6449/api/Supplier")
-            .then(response => {
-                const decryptedData = decryptObjectKeys(response.data);
-                setSupplierData(decryptedData)
-            }
-            )
-            .catch(error => console.error("Error fetching customers:", error));
-    }, []);
-
-    // Fetch customer brand data based on selected customer
-    useEffect(() => {
-        if (values?.customer?.customerID) {
-            setValue('brandCustomer', null)
-            Get(`https://ssblapi.m5groupe.online:6449/api/customerbrand/${values?.customer?.customerID}`)
-                .then(response => {
-                    const decryptedData = decryptObjectKeys(response.data);
-                    setBrandData(decryptedData)
-                }
-                )
-                .catch(error => console.error("Error fetching customer brands:", error));
-        } else {
-            setBrandData([]); // Reset brand data when no customer is selected
-        }
-    }, [values?.customer?.customerID, setValue]);
-
-
-    useEffect(() => {
-        Get(`https://ssblapi.m5groupe.online:6449/api/Merchants?userID=${UserID}&roleID=${RoleID}`)
-            .then(response => {
-                const decryptedData = decryptObjectKeys(response.data);
-                setMerchantData(decryptedData)
-            })
-            .catch(error => console.error("Error fetching customers:", error));
-    }, [UserID, RoleID]);
-
-
-    useEffect(() => {
-        Get("https://ssblapi.m5groupe.online:6449/api/ProductPortfolio")
-            .then(response => {
-                const decryptedData = decryptObjectKeys(response.data);
-                setproductPortfolioData(decryptedData)
-            })
-            .catch(error => console.error("Error fetching customers:", error));
-    }, []);
-
-    useEffect(() => {
-        if (values?.productPortfolio?.productPortfolioID) {
-            Get(`https://ssblapi.m5groupe.online:6449/api/productcategory/${values?.productPortfolio?.productPortfolioID}`)
-                .then(response => {
-                    const decryptedData = decryptObjectKeys(response.data);
-                    setproductCategoryData(decryptedData)
-                })
-                .catch(error => console.error("Error fetching customer brands:", error));
-        } else {
-            setproductCategoryData([]); // Reset brand data when no customer is selected
-        }
-    }, [values?.productPortfolio?.productPortfolioID]);
-
-
-    useEffect(() => {
-        if (values?.productCategory?.productCategoriesID) {
-            Get(`https://ssblapi.m5groupe.online:6449/api/productgroup/${values?.productCategory?.productCategoriesID}`)
-                .then(response => {
-                    const decryptedData = decryptObjectKeys(response.data);
-                    setproductGroupData(decryptedData)
-                })
-                .catch(error => console.error("Error fetching customer brands:", error));
-        } else {
-            setproductGroupData([]); // Reset brand data when no customer is selected
-        }
-    }, [values?.productCategory?.productCategoriesID]);
-
-    useEffect(() => {
-        console.log('hello from ')
-        Get(`https://ssblapi.m5groupe.online:6449/api/businessmanagers?ecpDivision=${ECPDivistion}`)
-            .then(response => {
-
-                setBusinsessManager(response.data)
-            })
-            .catch(error => console.error("Error fetching customers:", error));
-    }, [ECPDivistion]);
-    useEffect(() => {
-        Get("https://ssblapi.m5groupe.online:6449/api/shipmentmode")
-            .then(response => {
-                const decryptedData = decryptObjectKeys(response.data);
-                setShipmentModes(decryptedData)
-            })
-            .catch(error => console.error("Error fetching shipment modes:", error));
-    }, []);
-
-    useEffect(() => {
-        Get("https://ssblapi.m5groupe.online:6449/api/paymentmode")
-            .then(response => {
-                const decryptedData = decryptObjectKeys(response.data);
-                setPaymentModes(decryptedData)
-            })
-            .catch(error => console.error("Error fetching payment modes:", error));
-    }, []);
-
-    useEffect(() => {
-        Get("https://ssblapi.m5groupe.online:6449/api/currency")
-            .then(response => {
-                const decryptedData = decryptObjectKeys(response.data);
-                setCurrencies(decryptedData)
-            })
-            .catch(error => console.error("Error fetching currency:", error));
-    }, []);
-
-    const [existingRefNOs, setExistingRefNOs] = useState([]);
-
-
-
-    useEffect(() => {
-        Get("https://ssblapi.m5groupe.online:6449/api/pono") // Use the correct API that fetches only PONO
-            .then(response =>
-                setExistingRefNOs(response.data))
-
-            .catch(error => console.error("Error fetching PONO values", error));
-    }, []);
 
 
     function toUTCISOString(date) {
@@ -412,141 +165,69 @@ const BookingOrder = () => {
     }
     const [selectedRows, setSelectedRows] = useState([]);
 
-    const InsertMstData = async (DataToInsert) => {
-        const formData = new FormData();
-
-        // Append all fields dynamically
-        Object.keys(DataToInsert).forEach((key) => {
-            if (DataToInsert[key] !== undefined && DataToInsert[key] !== null) {
-                formData.append(key, DataToInsert[key]);
-            }
-        });
-
-        // ✅ Append files under correct key "File"
-        if (files?.length > 0) {
-            formData.append("File", files[0]); // ✅ Backend expects `dto.File`
-        }
-
-
-
+    const InsertMstData = async (dataToInsert) => {
         try {
 
-            const res = await Post(`https://ssblapi.m5groupe.online:6449/api/BookingPurchase/create`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+            const res = await authFetch('http://192.168.100.37:8070/api/Client', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataToInsert),
             });
 
-            if (res.status === 200) {
-                const { poid } = res.data;
-                if (poid) {
-                    return poid; // ✅ Return POID
+
+            if (res.ok) {
+                const result = await res.json();
+                const { id } = result;
+
+                if (id) {
+                    return id;
                 }
             }
 
-            enqueueSnackbar('Error: POID missing from response', { variant: 'error' });
-            return null; // ✅ Return null on failure
+            enqueueSnackbar("Something went wrong", { variant: "error" });
+            return null; // ✅ explicitly return null
         } catch (error) {
-            console.error(`Error creating master data:`, error);
-            return null; // ✅ Ensure failure return
+            console.error("Error creating master data:", error);
+            enqueueSnackbar("Something went wrong", { variant: "error" });
+            return null; // ✅ explicitly return null
         }
     };
 
-    // Function to insert detail data
-    const InsertDetailData = async (poid, details) => {
-        if (!poid) {
-            enqueueSnackbar("Error: Invalid POID", { variant: "error" });
-            return false; // ✅ Return false if no POID
-        }
 
 
-
-        const detailPayload = details.map(row => ({
-            poid,
-            quantity: row.poQuantity || 0,
-            rate: row.itemPrice || 0,
-            styleID: row.styleID || 0,
-            remarks: row.remarks || "",
-            newRate: row.itemPrice || 0,
-            vendorRate: row.vendorPrice || 0,
-            originalVendorRate: row.vendorPrice || 0,
-            styleMarkUpPerPc: row.markupPerPc || 0,
-        }));
-
-        try {
-            const res = await Post(`https://ssblapi.m5groupe.online:6449/api/BookingPurchase/add-details`, detailPayload);
-            return res.status === 200; // ✅ Return true if success
-        } catch (error) {
-            console.error(`Error creating detail data:`, error);
-            return false; // ✅ Ensure failure return
-        }
-    };
 
     // Form submission
     const onSubmit = handleSubmit(async (data) => {
-        if (selectedRows?.length === 0) {
-            enqueueSnackbar("Please select atleast one style", { variant: "error" });
-            return false; // ✅ Stop if Detail API fails
-        }
+
 
         try {
             console.log("CERTIFICATE", data);
-            console.log("Files to Upload:", files);
+
             const mstData = {
-                PONO: data.RefNO,
-                PlacementDate: toUTCISOString(new Date(data.placementDates)),
-                ShipmentDate: toUTCISOString(new Date(data.shipmentDateBuyer)),
-                Tolerance: toUTCISOString(new Date(data.shipmentDateVendor)),
-                CustomerID: data.customer?.customerID,
-                CusBrandID: data.brandCustomer?.brandID,
-                SupplierID: data.supplier?.venderLibraryID,
-                MarchandID: data.merchant?.userID,
-                ProductPortfolioID: data.productPortfolio?.productPortfolioID,
-                ProductCategoriesID: data?.productCategory?.productCategoriesID,
-                ProductGroupID: data?.productGroup?.productGroupID,
-                ProductGroup: data?.productGroup?.groupName,
-                Season: data.season,
-                Quality: data.fabricType,
-                BusinessManagerUserID: data.businessManagers?.userID || 0,
-                Construction: data.construction,
-                Currency: data.Currency.currencyName,
-                Design: data.design,
-                Transactions: data.transaction.TransName,
-                PaymentType: "4",
-                PaymentTypeNew: data.paymentType?.name,
-                LCTo: selectedLCOption || "--",
-                ShipmentMode: data.shipmentMode?.id,
-                PaymentMode: data.paymentMode?.id,
-                Commission: data.buyerCommissions,
-                VendorCommission: data.vendorCommissions,
-                TotalAmount: totalAmount || 0,
-                PORemarks: data.comments,
-                BookingCancelQty: cancelQuantity || 0,
-                TotalQty: totalQuantity || 0,
-                PreSupplierID: data.supplierPC?.id || 0,
-                B_isCertifications: Boolean(parseInt(data.certification, 10) === 1),
-                B_TC_Certifications: Boolean(parseInt(certificationValues.TC, 10) === 1),
-                B_GOTS_Certifications: Boolean(parseInt(certificationValues.GOTS, 10) === 1),
-                B_OTHERS_Certifications: Boolean(parseInt(certificationValues.Others, 10) === 1),
+                UserId: UserID,
+                CompanyName: data.companyName,
+                Industry: data.industry,
+                CompanySizeId: data.companySize?.id || 1,
+                Address: data.address,
+                ContactNumber: data.contactNumber,
+                ContactPerson: data.contactPerson,
+                Email: data.email,
+                Website: data.website,
+                Country: data.country,
+                EnrollmentDate: toUTCISOString(
+                    new Date(data?.enrollmentDate || Date.now())
+                ),
             };
 
             console.log('mstData', mstData);
 
             // ✅ First, call Master API to get POID
-            const poid = await InsertMstData(mstData, files);
+            const poid = await InsertMstData(mstData);
 
             if (!poid) {
                 enqueueSnackbar("Something went wrong", { variant: "error" });
                 return false; // ✅ Stop if Master API fails
             }
-
-            // ✅ If POID is received, submit detail data
-            const isDetailSuccess = await InsertDetailData(poid, selectedRows);
-
-
-            if (!isDetailSuccess && selectedRows) {
-                enqueueSnackbar("Something went wrong", { variant: "error" });
-                return false; // ✅ Stop if Detail API fails
-            }
-
             // ✅ Success message only if both APIs succeed
             enqueueSnackbar("Data Uploaded Successfully", { variant: "success" });
             return true;
@@ -557,17 +238,8 @@ const BookingOrder = () => {
             return false;
         }
     });
+    console.log("enrollment", values.enrollmentDate);
 
-    useEffect(() => {
-        if (selectedRows.length > 0) {
-            const total = selectedRows.reduce((sum, row) => sum + (row?.markupPerPc || 0), 0);
-            const average = total / selectedRows.length;
-            setTotalMark(average);
-            console.log("tt", average)
-        }
-        // setTotalMark(0); // Default if no data
-        // eslint-disable-next-line 
-    }, [selectedRows]);
     return (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
             <Box
@@ -575,10 +247,10 @@ const BookingOrder = () => {
                 justifyContent="space-between"
             >
                 <CustomBreadcrumbs
-                    heading="Booking Order Information"
+                    heading="Client Information"
                     links={[
                         { name: "Home", href: paths.dashboard.root },
-                        { name: "Booking Order", href: paths.dashboard.bookingOrder.root },
+                        { name: "Client", href: paths.dashboard.bookingOrder.root },
                         { name: "Add", },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}
@@ -590,7 +262,7 @@ const BookingOrder = () => {
 
 
                 <div>
-                    <Card sx={{ mt: 3, p: 2 }}>
+                    <Card sx={{ p: 2 }}>
                         <Typography variant="h5" sx={{ mb: 3 }}>
                             Order Booking Input Form
                         </Typography>
@@ -606,421 +278,56 @@ const BookingOrder = () => {
                             sx={{ mb: 3 }}
                         >
                             {/* Booking Reference No */}
-                            <RHFTextField name="RefNO" label="Booking Ref. NO" />
-                            {/* Placement Date */}
-                            <Controller
-                                name="placementDates"
-                                control={control}
-                                render={({ field, fieldState: { error } }) => (
-                                    <DatePicker
-                                        label="Placement Date"
-                                        format="dd/MM/yyyy"
-                                        value={field.value}
-                                        onChange={(newValue) => field.onChange(newValue)}
-                                        renderInput={(params) => <TextField {...params} />}
-                                        slotProps={{
-                                            textField: {
-                                                fullWidth: true,
-                                                error: !!error,
-                                                helperText: error?.message,
-                                            },
-                                        }}
-                                    />
-                                )}
+                            <RHFTextField name="companyName" label="Company Name" />
 
-                            />
+                            <RHFTextField name="industry" label="Industry" />
 
-                            <Controller
-                                name="shipmentDateVendor"
-                                control={control}
-                                render={({ field, fieldState: { error } }) => (
-                                    <DatePicker
-                                        label="Shipment Date (Buyer)"
-                                        format="dd/MM/yyyy"
-                                        value={field.value}
-                                        onChange={(newValue) => field.onChange(newValue)}
-                                        renderInput={(params) => <TextField {...params} />}
-                                        slotProps={{
-                                            textField: {
-                                                fullWidth: true,
-                                                error: !!error,
-                                                helperText: error?.message,
-                                            },
-                                        }}
-                                    />
-                                )}
-                            />
+
+
 
                             <RHFAutocomplete
-                                name="customer"
-                                label="Customer Name"
-                                options={customerData}
-                                getOptionLabel={(option) => option?.customerName || ""}
-                                fullWidth
-                                value={customerData?.find((x) => x.customerID === values?.customer?.customerID) || null}
-
-                            />
-
-                            {/* Customer Brand Selection */}
-                            <RHFAutocomplete
-                                name="brandCustomer"
-                                label="Brand Name"
-                                options={brandData}
-                                getOptionLabel={(option) => option?.brandName || ""}
-                                value={brandData?.find((x) => x.brandName === values?.brandCustomer?.brandName) || null}
-                                fullWidth
-
-                            />
-                            <RHFAutocomplete
-                                name="supplierPC"
-                                label="Supplier as per Customer"
-                                options={supPerCustom}
-                                getOptionLabel={(option) => option?.name || ""}
-                                value={supPerCustom?.find((x) => x.id === values?.supplierPC?.id) || 0}
-
-                                fullWidth
-
-                            />
-                            <RHFAutocomplete
-                                name="supplier"
-                                label="Supplier"
-                                options={SupplierData}
-                                getOptionLabel={(option) => option?.venderName || ""}
-                                value={SupplierData?.find((x) => x.venderLibraryID === values?.supplier?.venderLibraryID) || null}
-
-                                fullWidth
-
-                            />
-
-                            <Controller
-                                name="shipmentDateBuyer"
-                                control={control}
-                                render={({ field, fieldState: { error } }) => (
-                                    <DatePicker
-                                        label="Shipment Date (Vendor)"
-                                        format="dd/MM/yyyy"
-                                        value={field.value}
-                                        onChange={(newValue) => field.onChange(newValue)}
-                                        renderInput={(params) => <TextField {...params} />}
-                                        slotProps={{
-                                            textField: {
-                                                fullWidth: true,
-                                                error: !!error,
-                                                helperText: error?.message,
-                                            },
-                                        }}
-                                    />
-                                )}
-                            />
-
-                            <RHFAutocomplete
-                                name="merchant"
-                                label="Merchant"
-                                options={MerchantData}
-                                getOptionLabel={(option) => option?.userName || ""}
-                                value={MerchantData?.find((x) => x.userID === values?.merchant?.userID) || null}
-
-                                fullWidth
-
-                            />
-
-                        </Box>
-                    </Card>
-
-                </div>
-                <div>
-                    <Card sx={{ mt: 3, p: 2 }}>
-                        <Typography variant="h5" sx={{ mb: 3 }}>
-                            Product Information
-                        </Typography>
-
-                        <Box
-                            rowGap={3}
-                            columnGap={2}
-                            display="grid"
-                            gridTemplateColumns={{
-                                xs: 'repeat(1, 1fr)',  // Single column on extra small screens
-                                sm: 'repeat(1, 1fr)',  // Single column on small screens
-                                md: 'repeat(3, 1fr)',  // Three columns on medium screens and above
-                            }}
-                            sx={{
-                                mb: 3,
-                            }}
-                        >
-
-                            <RHFAutocomplete
-                                name="productPortfolio"
-                                label="Product Portfolio"
+                                name="companySizeId"
+                                label="Company Size"
                                 options={productPortfolioData}
-                                getOptionLabel={(option) => option?.productPortfolioName || ""}
-                                value={productPortfolioData?.find((x) => x.productPortfolioID === values?.productPortfolio?.productPortfolioID) || null}
+                                getOptionLabel={(option) => option?.sizeName || ""}
+                                value={productPortfolioData?.find((x) => x.id === values?.companySizeId?.id) || null}
 
                                 fullWidth
 
                             />
+                            <RHFTextField name="address" label="Address" fullWidth variant="outlined" />
+                            <RHFTextField name="contactNumber" label="Contact Number" fullWidth variant="outlined" />
 
 
-                            <RHFAutocomplete
-                                name="productCategory"
-                                label="Product Category"
-                                options={productCategoryData}
-                                getOptionLabel={(option) => option?.productCategory || ""}
-                                value={productCategoryData?.find((x) => x.productCategory === values?.productCategory?.productCategory) || null}
-                                fullWidth
-                                onChange={(_, newValue) => {
-                                    setValue("productCategory", newValue); // Update productCategory
-                                    setValue("productGroup", null); // Reset productGroup when category changes
-                                }}
-                            />
-                            <RHFAutocomplete
-                                name="productGroup"
-                                label="Product Group"
-                                options={productGroupData}
-                                getOptionLabel={(option) => option?.groupName || ""}
-                                value={productGroupData?.find((x) => x.groupName === values?.productGroup?.groupName) || null}
-                                fullWidth
-
-                            />
-
-                            <RHFTextField name="season" label="Season" fullWidth variant="outlined" />
-                            <RHFTextField name="fabricType" label="Fabric Type" fullWidth variant="outlined" />
-
-                            <RHFAutocomplete
-                                name="businessManagers"
-                                label="Businsess Manager"
-                                options={BusinsessManager}
-                                getOptionLabel={(option) => option?.username || ""}
-                                value={BusinsessManager?.find((x) => x.userID === values?.businessManagers?.userID) || null}
-
-                                fullWidth
-
-                            />
 
 
-                            <RHFTextField name="construction" label="Construction" fullWidth variant="outlined" />
-                            <RHFTextField name="design" label="Design" fullWidth variant="outlined" />
+                            <RHFTextField name="contactPerson" label="Contact Person" fullWidth variant="outlined" />
 
-                            <RHFAutocomplete
-                                name="transaction"
-                                label="Transactions"
-                                options={Transactions}
-                                getOptionLabel={(option) => option?.TransName || ""}
-                                value={Transactions?.find((x) => x.TransID === values?.transaction?.TransID) || null}
+                            <RHFTextField name="email" label="Email Address" fullWidth variant="outlined" />
+                            <RHFTextField name="website" label="Website" fullWidth variant="outlined" />
 
-                                fullWidth
-
+                            <RHFTextField name="country" label="country" fullWidth variant="outlined" />
+                            <Controller
+                                name="enrollmentDate"
+                                control={control}
+                                render={({ field }) => (
+                                    <DatePicker
+                                        label="enrollmentDate"
+                                        format="dd/MM/yyyy"
+                                        value={field.value}
+                                        onChange={(newValue) => field.onChange(newValue)}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                )}
                             />
 
                         </Box>
                     </Card>
 
                 </div>
-                <Card sx={{ mt: 3, p: 2 }}>
-
-                    <ProductSpecificInfo setTotalAmount={setTotalAmount} totalAmount={totalAmount}
-                        totalQuantity={totalQuantity} setTotalQuantity={setTotalQuantity} cancelQuantity={cancelQuantity} setCancelQuantity={setCancelQuantity}
-                        selectedRows={selectedRows} setSelectedRows={setSelectedRows} totalMark={totalMark} setTotalMark={setTotalMark}
-                    />
-                </Card>
-
-                <Card sx={{ mt: 3, p: 2 }}>
-                    <div>
-
-                        <Typography variant="h5" sx={{ mb: 3 }}>
-                            Commerical Section
-                        </Typography>
-                        <Box
-                            rowGap={3}
-                            columnGap={2}
-                            display="grid"
-                            gridTemplateColumns={{
-                                xs: 'repeat(1, 1fr)',  // Single column on extra small screens
-                                sm: 'repeat(1, 1fr)',  // Single column on small screens
-                                md: 'repeat(3, 1fr)',  // Three columns on medium screens and above
-                            }}
-                            sx={{
-                                mb: 3,
-                            }}
-                        >
-
-                            <RHFAutocomplete
-                                name="paymentType"
-                                label="Payment Type"
-                                options={paymentType}
-                                getOptionLabel={(option) => option.name || ""}
-                                value={paymentType?.find((x) => x.id === values?.paymentType?.id) || null}
-                                onChange={(event, newValue) => {
-                                    setValue("paymentType", newValue)
-                                    setSelectedPayment(newValue?.id);
-                                    setSelectedLCOption(null); // Reset LC option when payment type changes
-                                }}
-                                fullWidth
-
-                            />
 
 
-                            {selectedPayment === 1 && (
-
-
-
-                                <RHFAutocomplete
-                                    name="lcopt"
-                                    label="L/C Type"
-                                    options={lcOptions}
-                                    getOptionLabel={(option) => option}
-                                    value={selectedLCOption} // Ensures controlled component behavior
-                                    onChange={(event, newValue) => {
-                                        setSelectedLCOption(newValue || "--"); // Update local state
-                                        methods.setValue("lcopt", newValue || "--"); // Update form value
-                                    }}
-                                    isOptionEqualToValue={(option, value) => option === value}
-                                    fullWidth
-                                />
-
-                            )}
-
-                            <RHFAutocomplete
-                                name="shipmentMode"
-                                label="Shipment Mode"
-                                options={shipmentModes}
-                                getOptionLabel={(option) => option?.name || ""}
-
-                                value={shipmentModes?.find((x) => x.id === values?.shipmentMode?.id) || null}
-                                fullWidth
-
-                            />
-                            <RHFAutocomplete
-                                name="paymentMode"
-                                label="Payment Mode"
-                                options={paymentModes}
-                                getOptionLabel={(option) => option?.name || ""}
-
-                                value={paymentModes?.find((x) => x.id === values?.paymentMode?.id) || null}
-                                fullWidth
-
-                            />
-
-
-                            <Box sx={{ width: "100%" }}>
-                                {/* Certification Dropdown */}
-
-                                <RHFAutocomplete
-                                    name="certification"
-                                    label="Certification"
-                                    options={["Yes", "No"]}
-                                    onChange={handleCertificationChange}
-                                    fullWidth
-                                />
-
-
-                                {/* Display Checkboxes directly beneath the dropdown */}
-                                {selectedCertification === 1 && (
-                                    <Box sx={{ mt: 2 }}>
-                                        <FormGroup sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-                                            <FormControlLabel
-                                                control={<Checkbox checked={certificationValues.TC === 1} onChange={handleCheckboxChange} name="TC" />}
-                                                label="TC"
-                                            />
-                                            <FormControlLabel
-                                                control={<Checkbox checked={certificationValues.GOTS === 1} onChange={handleCheckboxChange} name="GOTS" />}
-                                                label="GOTS"
-                                            />
-                                            <FormControlLabel
-                                                control={<Checkbox checked={certificationValues.Others === 1} onChange={handleCheckboxChange} name="Others" />}
-                                                label="Others"
-                                            />
-                                        </FormGroup>
-                                    </Box>
-                                )}
-                            </Box>
-
-                            <RHFAutocomplete
-                                name="Currency"
-                                label="Currency"
-                                options={currencies}
-                                getOptionLabel={(option) => option?.currencyName || ""}
-
-                                value={currencies?.find((x) => x.currencyID === values?.Currency?.currencyID) || null}
-                                fullWidth
-
-                            />
-
-                        </Box>
-                        <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-                            {/* Buyer Commission */}
-                            <Box sx={{ flex: 1, display: "flex", flexDirection: "row", height: "100%", gap: 1 }}>
-                                <RHFTextField
-                                    name="buyerCommissions"
-                                    label="Buyer Commission (%)"
-                                    type="number"
-                                    fullWidth
-                                    variant="outlined"
-                                />
-
-                                <TextField
-                                    variant="outlined"
-                                    sx={{ mt: "auto", alignSelf: "flex-end" }} // Ensures it stays at the bottom
-                                    value={calculateCommission(values.buyerCommissions, totalAmount)}
-                                    InputProps={{ readOnly: true }}
-                                />
-                            </Box>
-
-                            {/* Vendor Commission */}
-                            <Box sx={{ flex: 1, display: "flex", flexDirection: "row", height: "100%", gap: 1 }}>
-                                <RHFTextField name="vendorCommissions" label="Vendor Commission (%)" type="number" fullWidth variant="outlined" />
-
-
-                                <TextField
-                                    variant="outlined"
-
-                                    sx={{ mt: "auto", alignSelf: "flex-end" }}
-                                    value={calculateCommission(values.vendorCommissions, totalAmount)}
-                                    InputProps={{ readOnly: true }}
-                                />
-                            </Box>
-
-                            {/* Total Markup */}
-                            <Box sx={{ flex: 1, display: "flex", flexDirection: "row", height: "100%", gap: 1 }}>
-                                <TextField label="Total Markup (%)" fullWidth variant="outlined" InputProps={{ readOnly: true }} />
-
-
-                                <TextField
-                                    variant="outlined"
-                                    name="totalMarkups"
-                                    sx={{ mt: "auto", alignSelf: "flex-end", textAlign: "right" }}
-                                    value={calculateMark(totalQuantity, totalMark)}
-                                    InputProps={{ readOnly: true }}
-
-                                />
-                            </Box>
-                        </Box>
-
-                    </div>
-
-                </Card>
-
-
-                <Card sx={{ mt: 3, p: 2, borderRadius: 2, boxShadow: 3 }}>
-                    <Typography variant="h5" sx={{ mb: 3 }}>
-                        Reference & Attachment
-                    </Typography>
-
-                    {/* Comment Field */}
-                    <RHFTextField name="comments" label="Add a comment" fullWidth variant="outlined" multiline sx={{ mb: 2 }} rows={3} />
-
-                    <RHFUpload
-                        name="files"
-                        files={files}
-                        accept={{ 'application/pdf': ['.pdf'] }}
-                        onDrop={handleDrop}
-                        onRemove={handleDeleteFile}
-                        sx={{ mt: 2 }}
-                        multiple
-                    />
-
-
-                </Card>
-                <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
                     <Button type="submit" variant="contained" color="primary">
                         Submit
                     </Button>

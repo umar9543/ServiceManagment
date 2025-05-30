@@ -206,7 +206,7 @@ export default function OverviewAppView() {
       <Grid container spacing={3}>
         <Grid xs={12} md={8}>
           <AppWelcome
-            title={`Welcome back 👋 \n ${userData.userName}`}
+            title={`Welcome back 👋 \n ${decrypt(userData.userName)}`}
             description="We're glad to have you here. Let's maintain quality together!"
             img={<SeoIllustration />}
           />

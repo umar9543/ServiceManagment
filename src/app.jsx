@@ -25,6 +25,7 @@ import { SettingsDrawer, SettingsProvider } from 'src/components/settings';
 import { AuthProvider } from 'src/auth/context/jwt';
 import { useEffect } from 'react';
 
+
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -79,5 +80,6 @@ export default function App() {
         </SettingsProvider>
       </LocalizationProvider>
     </AuthProvider>
+   
   );
 }

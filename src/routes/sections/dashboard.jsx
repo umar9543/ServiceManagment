@@ -7,6 +7,7 @@ import DashboardLayout from 'src/layouts/dashboard';
 import { LoadingScreen, SplashScreen } from 'src/components/loading-screen';
 import useUserData from 'src/routes/hooks/useUserData';
 
+
 // ----------------------------------------------------------------------
 
 // OVERVIEW
@@ -33,9 +34,14 @@ const BookingViewPage = lazy(() => import('src/pages/dashboard/BookingOrder/view
 const BookingAddPage = lazy(() => import('src/pages/dashboard/BookingOrder/add'));
 const BookingEditPage = lazy(() => import('src/pages/dashboard/BookingOrder/edit'));
 
-const SalesContractPage = lazy(() => import('src/pages/dashboard/SalesContract/view'));
-const SalesContractAddPage = lazy(() => import('src/pages/dashboard/SalesContract/add'));
-const SalesContractEditPage = lazy(() => import('src/pages/dashboard/SalesContract/edit'));
+const SellViewPage = lazy(() => import('src/pages/dashboard/SellPage/view'));
+const SellAddPage = lazy(() => import('src/pages/dashboard/SellPage/add'));
+const SellEditPage = lazy(() => import('src/pages/dashboard/SellPage/edit'));
+
+
+const PurchaseViewPage = lazy(() => import('src/pages/dashboard/PurchasePage/view'));
+const PurchaseAddPage = lazy(() => import('src/pages/dashboard/PurchasePage/add'));
+const PurchaseEditPage = lazy(() => import('src/pages/dashboard/PurchasePage/edit'));
 
 // ----------------------------------------------------------------------
 
@@ -151,15 +157,24 @@ export const dashboardRoutes = [
           { path: 'edit/:id', element: <BookingEditPage /> },
         ],
       },
-      {
-        path: 'SalesContract',
+       {
+        path: 'SellPage',
         children: [
-          { element: <SalesContractPage />, index: true },
-          // { path: 'view', element: <BookingViewPage /> },
-          { path: 'add', element: <SalesContractAddPage /> },
-          { path: 'edit/:id', element: <SalesContractEditPage /> },
+          { element: <SellViewPage />, index: true },
+          // { path: 'view', element: <SellViewPage /> },
+          { path: 'add', element: <SellAddPage /> },
+          { path: 'edit/:id', element: <SellEditPage /> },
         ],
-      }
+      },
+       {
+        path: 'PurchasePage',
+        children: [
+          { element: <PurchaseViewPage />, index: true },
+          // { path: 'view', element: <PurchaseViewPage /> },
+          { path: 'add', element: <PurchaseAddPage /> },
+          { path: 'edit/:id', element: <PurchaseEditPage /> },
+        ],
+      },
     ],
   },
 ];

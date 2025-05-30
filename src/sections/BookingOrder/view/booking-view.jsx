@@ -13,7 +13,7 @@ import { paths } from 'src/routes/paths';
 import { useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 import { useBoolean } from 'src/hooks/use-boolean';
-import { Delete, Get } from 'src/api/apibasemethods';
+import { Delete, Get, useAuthFetch } from 'src/api/apibasemethods';
 
 import { LoadingScreen } from 'src/components/loading-screen';
 
@@ -42,17 +42,17 @@ import BookingTableFiltersResult from '../booking-filters-result';
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'poNo', label: 'Booking Ref.NO', minWidth: 140 },
-  { id: 'username', label: 'Merchant', minWidth: 140 },
-  { id: 'customer', label: 'Customer', minWidth: 240 },
-  { id: 'vendor', label: 'Supplier', minWidth: 140 },
-  { id: 'styleNo', label: 'Style No', minWidth: 140 },
-  { id: 'placementDate', label: 'Placement Date', minWidth: 140,align: 'center' },
-  { id: 'shipmentDate', label: 'Shipment Date', minWidth: 140,align: 'center' },
+  { id: 'companyName', label: 'Company Name', minWidth: 140 },
+  { id: 'sizeName', label: 'Size Name', minWidth: 140 },
+  { id: 'industry', label: 'Industry', minWidth: 140 },
+  { id: 'address', label: 'Address', minWidth: 140 },
+  { id: 'contactNumber', label: 'Contact Number', minWidth: 160 },
+  { id: 'contactPerson', label: 'Contact Person', minWidth: 140, align: 'center' },
+  { id: 'email', label: 'Email Address', minWidth: 140, align: 'center' },
 
-  { id: 'pOqty', label: 'Booking Quantity', minWidth: 160,align: 'center' },
-  { id: 'amount', label: 'Amount', minWidth: 100,align: 'center' },
-  { id: 'remainingQty', label: 'Remaining Qty', minWidth: 140,align: 'center' },
+  { id: 'website', label: 'Website', minWidth: 140, align: 'center' },
+  { id: 'country', label: 'Country', minWidth: 100, align: 'center' },
+  { id: 'enrollmentDate', label: 'Enrollment Date', minWidth: 140, align: 'center' },
   { id: '', label: 'Actions', width: 88, align: 'center' },
 ];
 
@@ -67,11 +67,11 @@ const defaultFilters = {
 export default function BookingListView() {
   const navigate = useNavigate();
   const userData = useMemo(() => JSON.parse(localStorage.getItem('UserData')), []);
-     const UserID=decrypt(userData.ServiceRes.UserID);
-     const RoleID=decrypt(userData.ServiceRes.RoleID);
-     const ECPDivistion=decrypt(userData.ServiceRes.ECPDivistion);
- 
-  
+  const UserID = decrypt(userData.UserID);
+  const RoleID = decrypt(userData.RoleID);
+  const ECPDivistion = decrypt(userData.ECPDivistion);
+    const authFetch = useAuthFetch();
+
   // Table component Ref
   const tableComponentRef = useRef();
 
@@ -94,17 +94,16 @@ export default function BookingListView() {
     return decryptedData;
   };
 
-  const FetchBookingData = useCallback(async () => {
-    try {
-      const response = await Get(`https://ssblapi.m5groupe.online:6449/api/BookingPurchase/api/booking?userId=${UserID}&division=${ECPDivistion}`);
-      // const keysToExclude = ['EmployeeImage'];
-      // const decryptedData = decryptObjectKeys(response.data.ServiceRes, keysToExclude);
-      setTableData(response.data);
-    } catch (error) {
-      console.log(error);
-    }
-  }, [UserID, ECPDivistion]);
-
+ const FetchBookingData = useCallback(async () => {
+  try {
+    const response = await authFetch(`http://192.168.100.37:8070/api/Client`);
+    const data = await response.json(); // 🔥 Parse the JSON body
+    setTableData(data); // Now data is your actual array of bookings
+  } catch (error) {
+    console.log('FetchBookingData error:', error);
+  }
+}, [authFetch]);
+console.log('tableData:', tableData);
   useEffect(() => {
     const fetchData = async () => {
       await Promise.all([FetchBookingData()]);
@@ -159,22 +158,22 @@ export default function BookingListView() {
 
   // Edit Functions
   const [selectedBooking, setSelectedBooking] = useState(null);
-  const moveToEditForm = async(e) => {
+  const moveToEditForm = async (e) => {
     // try {
     //   const response = await fetch(`https://localhost:44347/api/BookingPurchase/${e}`);
     //   const bookingData = await response.json();
 
     //   if (response.ok) {
     //       setSelectedBooking(bookingData); // Set data for editing
-         
-          navigate(paths.dashboard.bookingOrder.edit(e)); // Show form on edit click
-  //     } else {
-  //         console.error("Failed to fetch booking data.");
-  //     }
-  // } catch (error) {
-  //     console.error("Error fetching booking data:", error);
-  // }
-    
+
+    navigate(paths.dashboard.bookingOrder.edit(e)); // Show form on edit click
+    //     } else {
+    //         console.error("Failed to fetch booking data.");
+    //     }
+    // } catch (error) {
+    //     console.error("Error fetching booking data:", error);
+    // }
+
   };
 
   // const DeleteDetailTableRow = async (id) => {
@@ -208,7 +207,7 @@ export default function BookingListView() {
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
           <CustomBreadcrumbs
             heading="Booking Orders"
-            links={[{ name: 'Home', href: paths.dashboard.root }, { name: 'Booking Orders' }]}
+            links={[{ name: 'Home', href: paths.dashboard.root }, { name: 'Clients' }]}
             action={
               <Button
                 component={RouterLink}
@@ -217,7 +216,7 @@ export default function BookingListView() {
                 startIcon={<Iconify icon="pepicons-pencil:plus" />}
                 color="primary"
               >
-                Add Booking Order
+                Add Clients
               </Button>
             }
             sx={{
@@ -272,9 +271,9 @@ export default function BookingListView() {
                         <BookingTableRow
                           key={row?.poid}
                           row={row}
-                          selected={table.selected.includes(row?.poid)}
-                          onEditRow={() => moveToEditForm(row?.poid)}
-                          // onDeleteRow={() => DeleteDetailTableRow(row?.YarnDatabaseID)}
+                          selected={table.selected.includes(row?.id)}
+                          onEditRow={() => moveToEditForm(row?.id)}
+                        // onDeleteRow={() => DeleteDetailTableRow(row?.YarnDatabaseID)}
                         />
                       ))}
 
@@ -324,12 +323,17 @@ function applyFilter({ inputData, comparator, filters }) {
   if (name) {
     inputData = inputData.filter(
       (yarn) =>
-        yarn?.customer.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        yarn?.username.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        yarn?.poNo.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        yarn?.styleNo.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
-        yarn?.vendor.toLowerCase().indexOf(name.toLowerCase()) !== -1
-       
+        yarn?.companyName?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.sizeName?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.industry?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.address?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.contactNumber?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.contactPerson?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.email?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.website?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.country?.toLowerCase().indexOf(name.toLowerCase()) !== -1 ||
+        yarn?.enrollmentDate?.toLowerCase().indexOf(name.toLowerCase()) !== -1
+
     );
   }
 

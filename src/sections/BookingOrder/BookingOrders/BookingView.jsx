@@ -32,9 +32,9 @@ const BookingView = () => {
 
 
     const userData = useMemo(() => JSON.parse(localStorage.getItem('UserData')), []);
-    const UserID=decrypt(userData.ServiceRes.UserID);
-    const RoleID=decrypt(userData.ServiceRes.RoleID);
-    const ECPDivistion=decrypt(userData.ServiceRes.ECPDivistion);
+    const UserID=decrypt(userData.UserID);
+    const RoleID=decrypt(userData.RoleID);
+    const ECPDivistion=decrypt(userData.ECPDivistion);
 console.log(UserID,RoleID,ECPDivistion)
     const [data, setData] = useState([]);
     const [selectedRows, setSelectedRows] = useState([]);
@@ -45,7 +45,7 @@ console.log(UserID,RoleID,ECPDivistion)
     const [showForm, setShowForm] = useState(false);
 
     useEffect(() => {
-        axios.get(`https://ssblapi.m5groupe.online:6449/api/BookingPurchase/api/booking?userId=${UserID}&division=${ECPDivistion}`)
+        axios.get(`https://localhost:44347/api/BookingPurchase/api/booking?userId=${UserID}&division=${ECPDivistion}`)
             .then((response) => {
                 setData(response.data);
             })

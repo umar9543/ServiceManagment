@@ -21,7 +21,7 @@ export default function BookingOrderAddPage() {
   return (
     <>
       <Helmet>
-        <title>Booking Order</title>
+        <title>Client</title>
       </Helmet>
 
       <BookingOrder/>
