@@ -138,7 +138,7 @@ const PurchasePage = () => {
     const [MerchantData, setMerchantData] = useState([]);
     const [productPortfolioData, setproductPortfolioData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Client/GetAllCompanySize")
+        authFetch("https://192.168.100.37:8080/api/Client/GetAllCompanySize")
             .then(response => response.json())
             .then(data => {
                 setproductPortfolioData(data); // ✅ Set the actual data
@@ -168,7 +168,7 @@ const PurchasePage = () => {
     const InsertMstData = async (dataToInsert) => {
         try {
 
-            const res = await authFetch('http://192.168.100.37:8070/api/Client', {
+            const res = await authFetch('https://192.168.100.37:8080/api/Client', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToInsert),

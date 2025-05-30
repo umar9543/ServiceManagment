@@ -178,7 +178,7 @@ const BookingEdit = ({ selectedBooking, urlData }) => {
     const [productPortfolioData, setproductPortfolioData] = useState([]);
 
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Client/GetAllCompanySize")
+        authFetch("https://192.168.100.37:8080/api/Client/GetAllCompanySize")
             .then(response => response.json())
             .then(data => {
                 setproductPortfolioData(data); // ✅ Set the actual data
@@ -237,7 +237,7 @@ const BookingEdit = ({ selectedBooking, urlData }) => {
 
             if (selectedBooking) {
                 // ✅ Send JSON for UPDATE API (PUT)
-                res = await authFetch(`http://192.168.100.37:8070/api/Client/${selectedBooking.id}`, {
+                res = await authFetch(`https://192.168.100.37:8080/api/Client/${selectedBooking.id}`, {
                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToInsert),
@@ -249,7 +249,7 @@ const BookingEdit = ({ selectedBooking, urlData }) => {
             else {
 
 
-                res = await authFetch('http://192.168.100.37:8070/api/Client', {
+                res = await authFetch('https://192.168.100.37:8080/api/Client', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(dataToInsert),
