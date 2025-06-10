@@ -34,9 +34,9 @@ const BookingViewPage = lazy(() => import('src/pages/dashboard/BookingOrder/view
 const BookingAddPage = lazy(() => import('src/pages/dashboard/BookingOrder/add'));
 const BookingEditPage = lazy(() => import('src/pages/dashboard/BookingOrder/edit'));
 
-const SellViewPage = lazy(() => import('src/pages/dashboard/SellPage/view'));
-const SellAddPage = lazy(() => import('src/pages/dashboard/SellPage/add'));
-const SellEditPage = lazy(() => import('src/pages/dashboard/SellPage/edit'));
+const SellViewPage = lazy(() => import('src/pages/dashboard/Services/view'));
+const SellAddPage = lazy(() => import('src/pages/dashboard/Services/add'));
+const SellEditPage = lazy(() => import('src/pages/dashboard/Services/edit'));
 
 
 const PurchaseViewPage = lazy(() => import('src/pages/dashboard/PurchasePage/view'));
@@ -158,7 +158,7 @@ export const dashboardRoutes = [
         ],
       },
        {
-        path: 'SellPage',
+        path: 'Services',
         children: [
           { element: <SellViewPage />, index: true },
           // { path: 'view', element: <SellViewPage /> },

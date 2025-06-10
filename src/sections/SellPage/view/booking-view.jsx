@@ -96,7 +96,7 @@ export default function SellListView() {
 
  const FetchBookingData = useCallback(async () => {
   try {
-    const response = await authFetch(`https://192.168.100.37:8080/api/Client`);
+    const response = await authFetch(`http://192.168.100.37:8070/api/Client`);
     const data = await response.json(); // 🔥 Parse the JSON body
     setTableData(data); // Now data is your actual array of bookings
   } catch (error) {
@@ -166,7 +166,7 @@ console.log('tableData:', tableData);
     //   if (response.ok) {
     //       setSelectedBooking(bookingData); // Set data for editing
 
-    navigate(paths.dashboard.bookingOrder.edit(e)); // Show form on edit click
+    navigate(paths.dashboard.Services.edit(e)); // Show form on edit click
     //     } else {
     //         console.error("Failed to fetch booking data.");
     //     }
@@ -207,16 +207,16 @@ console.log('tableData:', tableData);
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
           <CustomBreadcrumbs
             heading="Service Sell"
-            links={[{ name: 'Home', href: paths.dashboard.root }, { name: 'Clients' }]}
+            links={[{ name: 'Home', href: paths.dashboard.root }, { name: 'Services' }]}
             action={
               <Button
                 component={RouterLink}
-                href={paths.dashboard.Sell.add}
+                href={paths.dashboard.Services.add}
                 variant="contained"
                 startIcon={<Iconify icon="pepicons-pencil:plus" />}
                 color="primary"
               >
-                Add Clients
+                Add Services
               </Button>
             }
             sx={{

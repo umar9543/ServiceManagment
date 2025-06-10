@@ -70,7 +70,7 @@ export default function JwtLoginView() {
       const encryptedUserName = encodeURIComponent(encrypt(userName));
       const encryptedPassword = encodeURIComponent(encrypt(pwd));
 
-      const apiUrl = `https://192.168.100.37:8080/api/account/login?usercode=${encryptedUserName}&password=${encryptedPassword}`;
+      const apiUrl = `http://192.168.100.37:8070/api/account/login?usercode=${encryptedUserName}&password=${encryptedPassword}`;
 
       const response = await fetch(apiUrl, {
         method: 'GET',

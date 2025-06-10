@@ -138,7 +138,7 @@ const PurchasePage = () => {
     const [MerchantData, setMerchantData] = useState([]);
     const [productPortfolioData, setproductPortfolioData] = useState([]);
     useEffect(() => {
-        authFetch("https://192.168.100.37:8080/api/Client/GetAllCompanySize")
+        authFetch("http://192.168.100.37:8070/api/Service/GetAllCurrency")
             .then(response => response.json())
             .then(data => {
                 setproductPortfolioData(data); // ✅ Set the actual data
@@ -147,10 +147,86 @@ const PurchasePage = () => {
     }, [authFetch]);
 
 
+    const [ProviderData, setProviderData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Client/GetAllCompanySize")
+            .then(response => response.json())
+            .then(data => {
+                setProviderData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
+
+    const [TypeData, setTypeData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Service/GetAllServiceType")
+            .then(response => response.json())
+            .then(data => {
+                setTypeData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
+
+    const [payData, setPayData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Service/GetAllPaymentMethod")
+            .then(response => response.json())
+            .then(data => {
+                setPayData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
+
+    const [clientData, setClientData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Client")
+            .then(response => response.json())
+            .then(data => {
+                setClientData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
+
+    const [vendorData, setVendorData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Service/GetAllVendor")
+            .then(response => response.json())
+            .then(data => {
+                setVendorData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
+
+    const [StatusData, setStatusData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Service/GetAllStatuses")
+            .then(response => response.json())
+            .then(data => {
+                setStatusData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
+
+    const [paystatusData, setPaystatusData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Service/GetAllPaymentStatus")
+            .then(response => response.json())
+            .then(data => {
+                setPaystatusData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
 
 
-    const [selectedLCOption, setSelectedLCOption] = useState(null);
-
+    const [contactData, setcontactData] = useState([]);
+    useEffect(() => {
+        authFetch("http://192.168.100.37:8070/api/Service/GetAllContactMethod")
+            .then(response => response.json())
+            .then(data => {
+                setcontactData(data); // ✅ Set the actual data
+            })
+            .catch(error => console.error("Error fetching customers:", error));
+    }, [authFetch]);
 
     const getCookieValue = (name) => {
         const cookie = document.cookie
@@ -168,7 +244,7 @@ const PurchasePage = () => {
     const InsertMstData = async (dataToInsert) => {
         try {
 
-            const res = await authFetch('https://192.168.100.37:8080/api/Client', {
+            const res = await authFetch('http://192.168.100.37:8070/api/Client', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToInsert),
@@ -247,10 +323,10 @@ const PurchasePage = () => {
                 justifyContent="space-between"
             >
                 <CustomBreadcrumbs
-                    heading="Client Information"
+                    heading="Service Sell Information"
                     links={[
                         { name: "Home", href: paths.dashboard.root },
-                        { name: "Client", href: paths.dashboard.PurchasePage.root },
+                        { name: "Service Sell", href: paths.dashboard.Services.root },
                         { name: "Add", },
                     ]}
                     sx={{ mb: { xs: 3, md: 5 } }}
@@ -264,7 +340,7 @@ const PurchasePage = () => {
                 <div>
                     <Card sx={{ p: 2 }}>
                         <Typography variant="h5" sx={{ mb: 3 }}>
-                            Order Booking Input Form
+                            Service Sell Input Form
                         </Typography>
                         <Box
                             rowGap={3}
@@ -277,42 +353,133 @@ const PurchasePage = () => {
                             }}
                             sx={{ mb: 3 }}
                         >
-                            {/* Booking Reference No */}
-                            <RHFTextField name="companyName" label="Company Name" />
-
-                            <RHFTextField name="industry" label="Industry" />
-
-
-
-
                             <RHFAutocomplete
-                                name="companySizeId"
-                                label="Company Size"
-                                options={productPortfolioData}
-                                getOptionLabel={(option) => option?.sizeName || ""}
-                                value={productPortfolioData?.find((x) => x.id === values?.companySizeId?.id) || null}
+                                name="clients"
+                                label="Clients"
+                                options={clientData}
+                                getOptionLabel={(option) => option?.companyName || ""}
+                                value={clientData?.find((x) => x.id === values?.clients?.id) || null}
 
                                 fullWidth
 
                             />
-                            <RHFTextField name="address" label="Address" fullWidth variant="outlined" />
-                            <RHFTextField name="contactNumber" label="Contact Number" fullWidth variant="outlined" />
+                            <RHFAutocomplete
+                                name="vendor"
+                                label="Vendors"
+                                options={vendorData}
+                                getOptionLabel={(option) => option?.vendorName || ""}
+                                value={vendorData?.find((x) => x.id === values?.vendor?.id) || null}
+
+                                fullWidth
+
+                            />
+
+                            {/* Booking Reference No */}
+                            <RHFTextField name="Services" label="Services" />
 
 
+                            <RHFAutocomplete
+                                name="ServicesProvider"
+                                label="Services Provider"
+                                options={ProviderData}
+                                getOptionLabel={(option) => option?.sizeName || ""}
+                                value={ProviderData?.find((x) => x.id === values?.companySizeId?.id) || null}
 
+                                fullWidth
 
-                            <RHFTextField name="contactPerson" label="Contact Person" fullWidth variant="outlined" />
+                            />
 
-                            <RHFTextField name="email" label="Email Address" fullWidth variant="outlined" />
-                            <RHFTextField name="website" label="Website" fullWidth variant="outlined" />
+                            <RHFAutocomplete
+                                name="ServicesType"
+                                label="Services Type"
+                                options={TypeData}
+                                getOptionLabel={(option) => option?.serviceName || ""}
+                                value={TypeData?.find((x) => x.id === values?.ServicesType?.id) || null}
 
-                            <RHFTextField name="country" label="country" fullWidth variant="outlined" />
+                                fullWidth
+
+                            />
+
+                            <RHFAutocomplete
+                                name="status"
+                                label="Status"
+                                options={StatusData}
+                                getOptionLabel={(option) => option?.statusName || ""}
+                                value={StatusData?.find((x) => x.id === values?.status?.id) || null}
+
+                                fullWidth
+
+                            />
+                            <RHFTextField name="ExRate" label="Exchange Rate" />
+                            <RHFTextField name="NoUsers" label="Number of Users" />
+                            <RHFTextField name="NoLice" label="Number of Licenses" />
+                            <RHFTextField name="cost" label="Cost" />
+                            <RHFTextField name="totalcost" label="Total Cost" />
+                            <RHFAutocomplete
+                                name="currency"
+                                label="Currency"
+                                options={productPortfolioData}
+                                getOptionLabel={(option) => option?.currencyName || ""}
+                                value={productPortfolioData?.find((x) => x.id === values?.currency?.id) || null}
+
+                                fullWidth
+
+                            />
+
+                            <RHFAutocomplete
+                                name="paymethod"
+                                label="Payment Method"
+                                options={payData}
+                                getOptionLabel={(option) => option?.paymentMethodName || ""}
+                                value={payData?.find((x) => x.id === values?.paymethod?.id) || null}
+
+                                fullWidth
+
+                            />
+
+                            <RHFAutocomplete
+                                name="paystatus"
+                                label="Payment Status"
+                                options={paystatusData}
+                                getOptionLabel={(option) => option?.paymentStatusName || ""}
+                                value={paystatusData?.find((x) => x.id === values?.companySizeId?.id) || null}
+
+                                fullWidth
+
+                            />
+
+                            <RHFAutocomplete
+                                name="contactmethod"
+                                label="Contact Method"
+                                options={contactData}
+                                getOptionLabel={(option) => option?.contactMethodName || ""}
+                                value={contactData?.find((x) => x.id === values?.companySizeId?.id) || null}
+
+                                fullWidth
+
+                            />
+
                             <Controller
-                                name="enrollmentDate"
+                                name="purchaseDate"
                                 control={control}
                                 render={({ field }) => (
                                     <DatePicker
-                                        label="enrollmentDate"
+                                        label="Purchase Date"
+                                        format="dd/MM/yyyy"
+                                        value={field.value}
+                                        onChange={(newValue) => field.onChange(newValue)}
+                                        renderInput={(params) => <TextField {...params} />}
+                                    />
+                                )}
+                            />
+                            <RHFTextField name="country" label="Country" fullWidth variant="outlined" />
+
+                            <Controller
+                                name="expDate"
+                                control={control}
+                                render={({ field }) => (
+                                    <DatePicker
+                                        label="Expiry Date"
                                         format="dd/MM/yyyy"
                                         value={field.value}
                                         onChange={(newValue) => field.onChange(newValue)}

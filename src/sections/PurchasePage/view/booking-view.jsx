@@ -96,7 +96,7 @@ export default function PurchaseListView() {
 
  const FetchBookingData = useCallback(async () => {
   try {
-    const response = await authFetch(`https://192.168.100.37:8080/api/Client`);
+    const response = await authFetch(`http://192.168.100.37:8070/api/Client`);
     const data = await response.json(); // 🔥 Parse the JSON body
     setTableData(data); // Now data is your actual array of bookings
   } catch (error) {
@@ -211,7 +211,7 @@ console.log('tableData:', tableData);
             action={
               <Button
                 component={RouterLink}
-                href={paths.dashboard.bookingOrder.add}
+                href={paths.dashboard.PurchasePage.add}
                 variant="contained"
                 startIcon={<Iconify icon="pepicons-pencil:plus" />}
                 color="primary"
