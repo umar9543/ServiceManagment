@@ -76,22 +76,12 @@ export function useNavData() {
           //  (userData.roleID === '1') ?
           [
             { title: t('Clients'), path: paths.dashboard.bookingOrder.root, icon: ICONS.booking },
-           
+            { title: t('Services'), path: paths.dashboard.Services.root, icon: ICONS.assignment },
           ]
        
       },
  // ----------------------------------------------------------------------
-      {
-        /* eslint-disable no-nested-ternary */
-        subheader: t('Application'),
-        items:
-          //  (userData.roleID === '1') ?
-          [
-            { title: t('Services'), path: paths.dashboard.Services.root, icon: ICONS.assignment },
-           
-          ]
-       
-      },
+  
       
     ],
     [t]
