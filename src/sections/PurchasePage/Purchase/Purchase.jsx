@@ -138,7 +138,7 @@ const PurchasePage = () => {
     const [MerchantData, setMerchantData] = useState([]);
     const [productPortfolioData, setproductPortfolioData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Service/GetAllCurrency")
+        authFetch("https://192.168.100.37:8080/api/Service/GetAllCurrency")
             .then(response => response.json())
             .then(data => {
                 setproductPortfolioData(data); // ✅ Set the actual data
@@ -149,7 +149,7 @@ const PurchasePage = () => {
 
     const [ProviderData, setProviderData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Client/GetAllCompanySize")
+        authFetch("https://192.168.100.37:8080/api/Client/GetAllCompanySize")
             .then(response => response.json())
             .then(data => {
                 setProviderData(data); // ✅ Set the actual data
@@ -159,7 +159,7 @@ const PurchasePage = () => {
 
     const [TypeData, setTypeData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Service/GetAllServiceType")
+        authFetch("https://192.168.100.37:8080/api/Service/GetAllServiceType")
             .then(response => response.json())
             .then(data => {
                 setTypeData(data); // ✅ Set the actual data
@@ -169,7 +169,7 @@ const PurchasePage = () => {
 
     const [payData, setPayData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Service/GetAllPaymentMethod")
+        authFetch("https://192.168.100.37:8080/api/Service/GetAllPaymentMethod")
             .then(response => response.json())
             .then(data => {
                 setPayData(data); // ✅ Set the actual data
@@ -179,7 +179,7 @@ const PurchasePage = () => {
 
     const [clientData, setClientData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Client")
+        authFetch("https://192.168.100.37:8080/api/Client")
             .then(response => response.json())
             .then(data => {
                 setClientData(data); // ✅ Set the actual data
@@ -189,7 +189,7 @@ const PurchasePage = () => {
 
     const [vendorData, setVendorData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Service/GetAllVendor")
+        authFetch("https://192.168.100.37:8080/api/Service/GetAllVendor")
             .then(response => response.json())
             .then(data => {
                 setVendorData(data); // ✅ Set the actual data
@@ -199,7 +199,7 @@ const PurchasePage = () => {
 
     const [StatusData, setStatusData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Service/GetAllStatuses")
+        authFetch("https://192.168.100.37:8080/api/Service/GetAllStatuses")
             .then(response => response.json())
             .then(data => {
                 setStatusData(data); // ✅ Set the actual data
@@ -209,7 +209,7 @@ const PurchasePage = () => {
 
     const [paystatusData, setPaystatusData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Service/GetAllPaymentStatus")
+        authFetch("https://192.168.100.37:8080/api/Service/GetAllPaymentStatus")
             .then(response => response.json())
             .then(data => {
                 setPaystatusData(data); // ✅ Set the actual data
@@ -220,7 +220,7 @@ const PurchasePage = () => {
 
     const [contactData, setcontactData] = useState([]);
     useEffect(() => {
-        authFetch("http://192.168.100.37:8070/api/Service/GetAllContactMethod")
+        authFetch("https://192.168.100.37:8080/api/Service/GetAllContactMethod")
             .then(response => response.json())
             .then(data => {
                 setcontactData(data); // ✅ Set the actual data
@@ -244,7 +244,7 @@ const PurchasePage = () => {
     const InsertMstData = async (dataToInsert) => {
         try {
 
-            const res = await authFetch('http://192.168.100.37:8070/api/Client', {
+            const res = await authFetch('https://192.168.100.37:8080/api/Client', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToInsert),

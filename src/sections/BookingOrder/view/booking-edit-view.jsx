@@ -21,7 +21,7 @@ export default function BookingEditView({ urlData }) {
   useEffect(() => {
   if (!urlData?.id) return;
 
-  authFetch(`http://192.168.100.37:8070/api/Client/${urlData.id}`)
+  authFetch(`https://192.168.100.37:8080/api/Client/${urlData.id}`)
     .then(res => res.json()) // 🟢 parse the JSON
     .then(data => {
       console.log('Fetched client:', data);
