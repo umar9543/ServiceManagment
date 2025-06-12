@@ -48,10 +48,7 @@ export default function AccountPopover() {
   const popover = usePopover();
 
   const userData = JSON.parse(localStorage.getItem('UserData'));
-    const UserID=decrypt(userData.UserID);
-    const RoleID=decrypt(userData.RoleID);
-    const ECPDivistion=decrypt(userData.ECPDivistion);
-console.log(UserID,RoleID,ECPDivistion)
+  
   const handleLogout = async () => {
     try {
       await localStorage.removeItem('UserData');
@@ -88,7 +85,7 @@ console.log(UserID,RoleID,ECPDivistion)
       >
         <Avatar
           src={decrypt(userData?.ImagePath)}
-          alt={decrypt(userData.userName)}
+          alt={decrypt(userData?.userName)}
           sx={{
             width: 36,
             height: 36,

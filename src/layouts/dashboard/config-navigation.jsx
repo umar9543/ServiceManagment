@@ -56,6 +56,7 @@ export function useNavData() {
     () => [
       // OVERVIEW
       // ----------------------------------------------------------------------
+
       {
         subheader: t('overview'),
         items: [
@@ -63,6 +64,36 @@ export function useNavData() {
             title: t('Dashboard'),
             path: paths.dashboard.root,
             icon: ICONS.dashboard,
+          },
+          {
+            title: t('Setup'),
+            icon: ICONS.menuItem,
+            path: paths.dashboard.setup.root,
+
+            children: [
+              {
+                title: t('Vendor'),
+                path: paths.dashboard.setup.vendor,
+                // icon: ICONS.banking,
+              },
+              {
+                title: t('Currency'),
+                path: paths.dashboard.setup.currency,
+                // icon: ICONS.banking,
+              },
+              // {
+              //   title: t('Contact'),
+              //   path: paths.dashboard.setup.contact,
+              //   // icon: ICONS.banking,
+              // },
+              // {
+              //   title: t('Service type'),
+              //   path: paths.dashboard.setup.servicetype,
+              //   // icon: ICONS.banking,
+              // },
+
+
+            ],
           },
         ],
       },
@@ -75,14 +106,14 @@ export function useNavData() {
         items:
           //  (userData.roleID === '1') ?
           [
-            { title: t('Clients'), path: paths.dashboard.bookingOrder.root, icon: ICONS.booking },
-            { title: t('Services'), path: paths.dashboard.Services.root, icon: ICONS.assignment },
+            { title: t('Clients'), path: paths.dashboard.bookingOrder.root, icon: ICONS.meeting },
+            { title: t('Services'), path: paths.dashboard.Services.root, icon: ICONS.management },
           ]
-       
+
       },
- // ----------------------------------------------------------------------
-  
-      
+      // ----------------------------------------------------------------------
+
+
     ],
     [t]
   );

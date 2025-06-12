@@ -28,7 +28,7 @@ const UserAccountPage = lazy(() => import('src/pages/dashboard/user/account'));
 // const ShipmentTrackingReportPage = lazy(() => import('src/pages/dashboard/reports/shipment&tracking-report'));
 // const WIPReportPage = lazy(() => import('src/pages/dashboard/reports/wip-report'));
 // const YearlyCommissionReportPage = lazy(() => import('src/pages/dashboard/reports/yearly-commission-report'));
-const PurchaseOrderPage=lazy(() => import('src/pages/dashboard/reports/Booking-Order'));
+const PurchaseOrderPage = lazy(() => import('src/pages/dashboard/reports/Booking-Order'));
 
 const BookingViewPage = lazy(() => import('src/pages/dashboard/BookingOrder/view'));
 const BookingAddPage = lazy(() => import('src/pages/dashboard/BookingOrder/add'));
@@ -42,7 +42,8 @@ const SellEditPage = lazy(() => import('src/pages/dashboard/Services/edit'));
 const PurchaseViewPage = lazy(() => import('src/pages/dashboard/PurchasePage/view'));
 const PurchaseAddPage = lazy(() => import('src/pages/dashboard/PurchasePage/add'));
 const PurchaseEditPage = lazy(() => import('src/pages/dashboard/PurchasePage/edit'));
-
+const VendorListPage = lazy(() => import('src/pages/dashboard/setup/vendor/view'));
+const CurrencyListPage = lazy(() => import('src/pages/dashboard/setup/currency/view'));
 // ----------------------------------------------------------------------
 
 
@@ -70,82 +71,50 @@ export const dashboardRoutes = [
         ],
       },
       {
-        path: 'reports',
+        path: 'setup',
+        element: (
+          <Suspense fallback={<LoadingScreen />}>
+            <Outlet />
+          </Suspense>
+        ),
         children: [
-          // { element: <BusinessSummaryOWReportPage />, index: true },
+          {
+            path: 'vendor',
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <VendorListPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: 'currency',
+            element: (
+              <Suspense fallback={<LoadingScreen />}>
+                <CurrencyListPage />
+              </Suspense>
+            ),
+          },
           // {
-          //   path: 'business-summary-order-wise-report',
-          //   children: [
-          //     { element: <BusinessSummaryOWReportPage />, index: true },
-          //   ]
+          //   path: 'room',
+          //   element: (
+          //     <Suspense fallback={<LoadingScreen />}>
+          //       <RoomListPage />
+          //     </Suspense>
+          //   ),
           // },
           // {
-          //   path: 'business-summary-report',
-          //   children: [
-          //     { element: <BusinessSummaryReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'commission-due-report',
-          //   children: [
-          //     { element: <CommissionDueReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'factory-wip-report',
-          //   children: [
-          //     { element: <FactoryWIPReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'order-report',
-          //   children: [
-          //     { element: <OrderReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'shipment-delay-report',
-          //   children: [
-          //     { element: <ShipmentDelayReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'shipment-history-report',
-          //   children: [
-          //     { element: <ShipmentHistoryReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'shipment-update-report',
-          //   children: [
-          //     { element: <ShipmentUpdateReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'shipment-tracking-report',
-          //   children: [
-          //     { element: <ShipmentTrackingReportPage />, index: true },
-          //   ]
+          //   path: 'category',
+          //   element: (
+          //     <Suspense fallback={<LoadingScreen />}>
+          //       <CategoryListPage />
+          //     </Suspense>
+          //   ),
           // },
 
-          // {
-          //   path: 'wip-report',
-          //   children: [
-          //     { element: <WIPReportPage />, index: true },
-          //   ]
-          // },
-          // {
-          //   path: 'yearly-commission-report',
-          //   children: [
-          //     { element: <YearlyCommissionReportPage />, index: true },
-          //   ]
-          // },
-          {
-            path: 'Booking-Order',
-            children: [
-              { element: <PurchaseOrderPage />, index: true },
-            ]
-          },
+
+
+
+
         ],
       },
       {
@@ -157,7 +126,7 @@ export const dashboardRoutes = [
           { path: 'edit/:id', element: <BookingEditPage /> },
         ],
       },
-       {
+      {
         path: 'Services',
         children: [
           { element: <SellViewPage />, index: true },
@@ -166,7 +135,7 @@ export const dashboardRoutes = [
           { path: 'edit/:id', element: <SellEditPage /> },
         ],
       },
-       {
+      {
         path: 'PurchasePage',
         children: [
           { element: <PurchaseViewPage />, index: true },

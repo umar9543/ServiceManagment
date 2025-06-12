@@ -291,39 +291,35 @@ const Sell = () => {
 
                 CurrencyId: data?.currency?.id,
 
-                ServiceTypeId: data.ServiceTypeId,
+                ServiceTypeId: data.ServicesType?.id,
 
-                PaymentMethodId: data.PaymentMethodId,
+                PaymentMethodId: data.paymethod?.id,
 
-                ContactMethodId: data.ContactMethodId,
+                ContactMethodId: data.contactmethod?.id,
 
-                SellPurchaseId: data.SellPurchaseId,
+                SellPurchaseId: data.ServicesCategory?.id,
 
-                PaymentStatusId: data.PaymentStatusId,
+                PaymentStatusId: data.paystatus?.id,
 
                 VendorId: data?.vendor.id,
 
                 StatusId: data?.status?.id,
 
-                ExchangeRate: data.ExchangeRate,
+                ExchangeRate: data.ExRate,
 
                 TotalCost: data.totalcost,
 
-                UserNumber: data.UserNumber,
+                UserNumber: data.NoUsers,
 
-                NumberLicense: data.NumberLicense,
+                NumberLicense: data.NoLice,
 
                 Country: data.country,
 
-                PurchaseDate: toUTCISOString(
-
-                    new Date(data?.enrollmentDate || Date.now())
-
-                ),
+                EmailFrequency: Number(data.email),
 
                 ExpirationDate: toUTCISOString(
 
-                    new Date(data?.enrollmentDate || Date.now())
+                    new Date(data?.expDate || Date.now())
 
                 ),
 
@@ -493,19 +489,7 @@ const Sell = () => {
                             />
                             <RHFTextField name="country" label="Country" fullWidth variant="outlined" />
 
-                            <Controller
-                                name="purchaseDate"
-                                control={control}
-                                render={({ field }) => (
-                                    <DatePicker
-                                        label="Purchase Date"
-                                        format="dd/MM/yyyy"
-                                        value={field.value}
-                                        onChange={(newValue) => field.onChange(newValue)}
-                                        renderInput={(params) => <TextField {...params} />}
-                                    />
-                                )}
-                            />
+                            <RHFTextField name="email" label="Email Frequency" type='number' fullWidth variant="outlined" />
 
                             <Controller
                                 name="expDate"

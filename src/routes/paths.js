@@ -73,20 +73,28 @@ export const paths = {
         root: `${ROOTS.DASHBOARD}/reports/Booking-Order`,
       },
     },
-    bookingOrder:{
+    bookingOrder: {
       root: `${ROOTS.DASHBOARD}/BookingOrder`,
-      add:  `${ROOTS.DASHBOARD}/BookingOrder/add`,
-      edit:(id) =>`${ROOTS.DASHBOARD}/BookingOrder/edit/${id}`
+      add: `${ROOTS.DASHBOARD}/BookingOrder/add`,
+      edit: (id) => `${ROOTS.DASHBOARD}/BookingOrder/edit/${id}`
     },
-    Services:{
+    Services: {
       root: `${ROOTS.DASHBOARD}/Services`,
-      add:  `${ROOTS.DASHBOARD}/Services/add`,
-      edit:(id) =>`${ROOTS.DASHBOARD}/Services/edit/${id}`
+      add: `${ROOTS.DASHBOARD}/Services/add`,
+      edit: (id) => `${ROOTS.DASHBOARD}/Services/edit/${id}`
     },
-     PurchasePage:{
+    PurchasePage: {
       root: `${ROOTS.DASHBOARD}/PurchasePage`,
-      add:  `${ROOTS.DASHBOARD}/PurchasePage/add`,
-      edit:(id) =>`${ROOTS.DASHBOARD}/PurchasePage/edit/${id}`
+      add: `${ROOTS.DASHBOARD}/PurchasePage/add`,
+      edit: (id) => `${ROOTS.DASHBOARD}/PurchasePage/edit/${id}`
+    },
+    setup: {
+      root: `${ROOTS.DASHBOARD}/setup`,
+      vendor: `${ROOTS.DASHBOARD}/setup/vendor`,
+      currency: `${ROOTS.DASHBOARD}/setup/currency`,
+      location: `${ROOTS.DASHBOARD}/setup/location`,
+
+
     },
   },
 };

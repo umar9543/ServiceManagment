@@ -50,7 +50,7 @@ export default function HeaderSimple() {
       >
         <Box
           component="img"
-          src="/assets/images/synergies.png"
+          src="/assets/illustrations/bg-logos.png"
           alt="logo"
           sx={{
             width: '40px',

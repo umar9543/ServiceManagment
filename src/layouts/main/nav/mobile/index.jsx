@@ -55,7 +55,7 @@ export default function NavMobile({ data }) {
 
           <Box
             component="img"
-            src="/assets/images/synergies.png"
+            src="/assets/illustrations/bg-logos.png"
             alt="logo"
             sx={{ mx: 2.5, my: 3, width: '40px',height: "auto" }}
           />

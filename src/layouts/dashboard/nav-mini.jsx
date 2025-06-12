@@ -45,7 +45,7 @@ export default function NavMini() {
       >
         <Box
           component="img"
-          src="/assets/images/synergies.png"
+          src="/assets/illustrations/bg-logos.png"
           alt="logo"
           sx={{ mx: 'auto', my: 2, width: '40px',height: "auto" }}
         />

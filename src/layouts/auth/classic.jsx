@@ -38,7 +38,7 @@ export default function AuthClassicLayout({ children, image, title }) {
   const renderLogo = (
     <Box
       component="img"
-      src="/assets/images/synergies.png"
+      src="/assets/illustrations/bg-logos.png"
       alt="logo"
       sx={{
         zIndex: 9,
