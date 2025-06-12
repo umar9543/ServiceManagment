@@ -71,9 +71,9 @@ export default function CurrencyTableRow({ row, selected, onEditRow, onDeleteRow
           <Label color={getStatusColor(isActive)}>{isActive}</Label>
         </TableCell> */}
         <TableCell sx={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
-          <IconButton onClick={() => onEditRow()}>
+          {/* <IconButton onClick={() => onEditRow()}>
             <Iconify icon="solar:pen-bold" />
-          </IconButton>
+          </IconButton> */}
           <IconButton
             color="error"
             onClick={() => {

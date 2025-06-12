@@ -206,7 +206,7 @@ console.log('tableData:', tableData);
       ) : (
         <Container maxWidth={settings.themeStretch ? false : 'lg'}>
           <CustomBreadcrumbs
-            heading="Booking Orders"
+            heading="Clients"
             links={[{ name: 'Home', href: paths.dashboard.root }, { name: 'Clients' }]}
             action={
               <Button
